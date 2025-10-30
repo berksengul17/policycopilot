@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.be</groupId>
-    <artifactId>policycopilot-backendd</artifactId>
+    <artifactId>policycopilot-backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>policycopilot-backendd</name>
-    <description>policycopilot-backendd</description>
+    <name>policycopilot-backend</name>
+    <description>policycopilot-backend</description>
     <url/>
     <licenses>
         <license/>
