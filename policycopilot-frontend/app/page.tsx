@@ -1,4 +1,49 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+
 export default function HomePage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [err, setErr] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setErr(null);
+    setLoading(true);
+    try {
+      const res = await axios.post(
+        "/api/auth/login",
+        { email, password },
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      if (res.status < 200 || res.status >= 300) {
+        const msg =
+          typeof res.data === "string"
+            ? res.data
+            : res.data?.message ?? "Login failed";
+        throw new Error(msg);
+      }
+
+      router.push("/home");
+    } catch (e: unknown) {
+      const msg = (
+        axios.isAxiosError(e)
+          ? e?.response?.data?.message || e.response?.data || e.message
+          : "Login failed"
+      ) as string;
+
+      setErr(msg);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-400 via-violet-500 to-fuchsia-500 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -10,14 +55,14 @@ export default function HomePage() {
             </h1>
 
             {/* Form */}
-            <form className="mt-8 space-y-6">
+            <form onSubmit={onSubmit} className="mt-8 space-y-6">
               {/* Username */}
               <div className="space-y-2">
                 <label
-                  htmlFor="username"
+                  htmlFor="email"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Username
+                  Email
                 </label>
                 <div className="relative">
                   <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -37,9 +82,11 @@ export default function HomePage() {
                     </svg>
                   </span>
                   <input
-                    type="text"
-                    id="username"
-                    placeholder="Type your username"
+                    type="email"
+                    id="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Type your email"
                     className="w-full rounded-xl border border-gray-300 bg-white/70 pl-10 pr-3 py-3 text-gray-900 placeholder-gray-400 outline-none ring-0 focus:border-violet-500 focus:ring-2 focus:ring-violet-200 transition"
                   />
                 </div>
@@ -73,6 +120,8 @@ export default function HomePage() {
                   <input
                     type="password"
                     id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     placeholder="Type your password"
                     className="w-full rounded-xl border border-gray-300 bg-white/70 pl-10 pr-3 py-3 text-gray-900 placeholder-gray-400 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-200 transition"
                   />
@@ -93,8 +142,10 @@ export default function HomePage() {
                 className="w-full rounded-full py-3 font-semibold text-white shadow-md
                   bg-gradient-to-r from-teal-400 to-violet-500 hover:opacity-95 active:scale-[.99] transition"
               >
-                LOGIN
+                {loading ? "Signing in..." : "LOGIN"}
               </button>
+
+              {err && <p className="text-sm text-red-600 text-center">{err}</p>}
             </form>
 
             {/* Social sign-in */}
