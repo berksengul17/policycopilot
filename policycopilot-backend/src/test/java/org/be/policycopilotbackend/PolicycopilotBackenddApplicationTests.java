@@ -1,4 +1,4 @@
-package org.be.policycopilotbackendd;
+package org.be.policycopilotbackend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
