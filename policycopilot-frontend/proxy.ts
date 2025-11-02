@@ -7,7 +7,7 @@ export function proxy(req: NextRequest) {
 
   if (!token) {
     const url = req.nextUrl.clone();
-    url.pathname = "/";
+    url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
@@ -17,5 +17,5 @@ export function proxy(req: NextRequest) {
 export const config = {
   // Exclude _next, api, favicon, and common static files — and still skip "/"
   matcher:
-    "/((?!_next|api|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|map)).+)",
+    "/((?!_next|api|login|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|map)).*)",
 };

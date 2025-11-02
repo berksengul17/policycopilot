@@ -1,18 +1,9 @@
-import axios from "axios";
+import { server } from "@/lib/axios";
 import { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-
-  const res = await axios.post(
-    `${process.env.API_URL}/api/v1/auth/login`,
-    body,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  const res = await server.post("/auth/login", body);
 
   const headers = new Headers();
   const setCookie = res.headers["set-cookie"];
