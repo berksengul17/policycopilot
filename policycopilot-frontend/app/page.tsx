@@ -1,3 +1,5 @@
-export default function Homepage() {
-  return <div>Homepage</div>;
+import HomeClient from "@/components/home/HomeClient";
+
+export default function Home() {
+  return <HomeClient />;
 }
