@@ -19,3 +19,27 @@ export async function uploadDocument(file: File): Promise<void> {
 
   if (status < 200 || status >= 300) throw new Error("Document upload failed");
 }
+
+export async function downloadDocument(fileId: string) {
+  const res = await api.get(`/document/download/${fileId}`, {
+    responseType: "blob",
+  });
+
+  const disposition = res.headers["content-disposition"];
+  let filename = "download";
+  if (disposition) {
+    const match = disposition.match(/filename="?(.*)"?/);
+    if (match && match[1]) {
+      filename = match[1];
+    }
+  }
+
+  const url = URL.createObjectURL(res.data);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
