@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/document")
@@ -16,6 +17,13 @@ import java.io.IOException;
 public class DocumentController {
 
     private final DocumentService documentService;
+
+    @GetMapping("/get-all")
+    public ResponseEntity<List<Document>> getAllDocuments(@AuthenticationPrincipal User user) {
+        List<Document> docs = documentService.getAllForUser(user);
+
+        return ResponseEntity.ok().body(docs);
+    }
 
     @PostMapping("/upload")
     public ResponseEntity<String> uploadDocument(@RequestParam("file") MultipartFile file,

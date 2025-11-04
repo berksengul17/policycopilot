@@ -19,7 +19,7 @@ public class Document {
     private String name;
     @Temporal(TemporalType.DATE)
     private Date uploadDate;
-    @Lob
+    @Column(columnDefinition = "bytea")
     private byte[] content;
     private  String contentType;
     @Enumerated(EnumType.STRING)
