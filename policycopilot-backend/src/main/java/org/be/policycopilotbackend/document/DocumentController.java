@@ -55,6 +55,7 @@ public class DocumentController {
             return ResponseEntity
                     .ok()
                     .header("Content-Type", doc.getContentType())
+                    .header("Content-Disposition", "attachment; filename=\"" + doc.getName() + "\"")
                     .body(doc.getContent());
         } catch (DocumentNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
