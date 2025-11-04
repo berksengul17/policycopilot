@@ -5,8 +5,8 @@ export interface Doc {
   id: string;
   name: string;
   type: DocType;
-  uploadedAt: string; // ISO
+  uploadDate: string; // ISO
   piiCount: number;
-  highRisk: number;
+  highRiskCount: number;
   status: DocStatus;
 }

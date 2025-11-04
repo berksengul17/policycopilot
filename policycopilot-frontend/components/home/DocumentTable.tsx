@@ -75,15 +75,15 @@ export default function DocumentTable({
                   <Td>
                     <Badge tone="stone">{d.type}</Badge>
                   </Td>
-                  <Td>{new Date(d.uploadedAt).toLocaleString()}</Td>
+                  <Td>{new Date(d.uploadDate).toLocaleDateString()}</Td>
                   <Td>
                     <Badge tone={d.piiCount ? "violet" : "stone"}>
                       {d.piiCount}
                     </Badge>
                   </Td>
                   <Td>
-                    <Badge tone={d.highRisk ? "rose" : "stone"}>
-                      {d.highRisk}
+                    <Badge tone={d.highRiskCount ? "rose" : "stone"}>
+                      {d.highRiskCount}
                     </Badge>
                   </Td>
                   <Td>

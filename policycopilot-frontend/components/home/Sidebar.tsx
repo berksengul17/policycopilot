@@ -2,7 +2,6 @@
 
 import SidebarBtn from "@/components/ui/SidebarBtn";
 import Status from "@/components/ui/Status";
-import { logout } from "@/services/docService";
 
 export default function Sidebar({
   userName,
@@ -57,7 +56,7 @@ export default function Sidebar({
 
       <button
         className="mt-8 w-full rounded-xl border border-gray-200 py-2 text-sm text-gray-600 hover:bg-gray-50 transition"
-        onClick={() => logout()}
+        onClick={() => {}}
       >
         Logout
       </button>

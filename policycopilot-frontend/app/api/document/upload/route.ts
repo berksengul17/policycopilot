@@ -9,6 +9,7 @@ export async function POST(req: NextRequest) {
     const backendRes = await server.post("/document/upload", formData, {
       headers: {
         cookie,
+        "Content-Type": req.headers.get("Content-Type"),
       },
       maxBodyLength: Infinity,
     });

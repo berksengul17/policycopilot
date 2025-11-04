@@ -25,7 +25,9 @@ export function useDocuments() {
       if (!f) return;
       const created = await uploadDocument(f);
       setDocs((prev) => [created, ...prev]);
-      e.currentTarget.value = "";
+      if (fileRef.current) {
+        fileRef.current.value = "";
+      }
     },
     []
   );
@@ -40,7 +42,7 @@ export function useDocuments() {
     [docs]
   );
   const totalHighRisk = useMemo(
-    () => docs.reduce((s, d) => s + d.highRisk, 0),
+    () => docs.reduce((s, d) => s + d.highRiskCount, 0),
     [docs]
   );
   const queuedCount = useMemo(
