@@ -1,0 +1,5 @@
+ALTER TABLE document
+    ADD user_id BIGINT;
+
+ALTER TABLE document
+    ADD CONSTRAINT FK_DOCUMENT_ON_USER FOREIGN KEY (user_id) REFERENCES users (id);

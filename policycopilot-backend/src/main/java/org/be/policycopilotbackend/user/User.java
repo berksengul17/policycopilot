@@ -4,12 +4,14 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.be.policycopilotbackend.document.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -31,6 +33,8 @@ public class User implements UserDetails {
     private String verificationCode;
     @Column(name = "verification_expiration")
     private LocalDateTime verificationCodeExpiresAt;
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+    private Set<Document> documents;
 
     public User(String username, String email, String password) {
         this.username = username;
