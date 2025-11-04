@@ -26,17 +26,17 @@ public class DocumentController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadDocument(@RequestParam("file") MultipartFile file,
+    public ResponseEntity<Document> uploadDocument(@RequestParam("file") MultipartFile file,
                                                  @AuthenticationPrincipal User user) {
         try {
             Document doc = documentService.saveDocument(file, user);
             return ResponseEntity
                     .status(HttpStatus.CREATED)
-                    .body(String.format("Document with the name '%s' is successfully uploaded..",  doc.getName()));
+                    .body(doc);
         } catch (IOException e) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body("Error while saving the document.");
+                    .build();
         }
     }
 
