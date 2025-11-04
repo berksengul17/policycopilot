@@ -19,17 +19,18 @@ public class DocumentController {
     private final DocumentService documentService;
 
     @GetMapping("/get-all")
-    public ResponseEntity<List<Document>> getAllDocuments(@AuthenticationPrincipal User user) {
-        List<Document> docs = documentService.getAllForUser(user);
+    public ResponseEntity<List<DocumentDto>> getAllDocuments(@AuthenticationPrincipal User user) {
+        List<DocumentDto> docs = documentService.getAllForUser(user)
+                .stream().map(DocumentDto::from).toList();
 
         return ResponseEntity.ok().body(docs);
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<Document> uploadDocument(@RequestParam("file") MultipartFile file,
+    public ResponseEntity<DocumentDto> uploadDocument(@RequestParam("file") MultipartFile file,
                                                  @AuthenticationPrincipal User user) {
         try {
-            Document doc = documentService.saveDocument(file, user);
+            DocumentDto doc = DocumentDto.from(documentService.saveDocument(file, user));
             return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .body(doc);
