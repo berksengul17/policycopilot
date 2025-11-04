@@ -21,9 +21,11 @@ public class Document {
     private Date uploadDate;
     @Column(columnDefinition = "bytea")
     private byte[] content;
-    private  String contentType;
+    private String contentType;
     @Enumerated(EnumType.STRING)
     private DocumentStatus status;
+    private int piiCount;
+    private int highRiskCount;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User owner;
@@ -34,6 +36,8 @@ public class Document {
         this.content = content;
         this.contentType = contentType;
         this.owner = owner;
-        this.status = DocumentStatus.UPLOADED;
+        this.status = DocumentStatus.QUEUED;
+        this.piiCount = 0;
+        this.highRiskCount = 0;
     }
 }
