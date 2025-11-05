@@ -55,7 +55,7 @@ export function useDocuments() {
     [docs]
   );
   const queuedCount = useMemo(
-    () => docs.filter((d) => d.status === "Queued").length,
+    () => docs.filter((d) => d.status === "QUEUED").length,
     [docs]
   );
 

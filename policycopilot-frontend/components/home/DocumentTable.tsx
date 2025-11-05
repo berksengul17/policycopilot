@@ -73,9 +73,6 @@ export default function DocumentTable({
                   <Td>
                     <span className="font-medium text-gray-900">{d.name}</span>
                   </Td>
-                  <Td>
-                    <Badge tone="stone">{d.type}</Badge>
-                  </Td>
                   <Td>{new Date(d.uploadDate).toLocaleDateString()}</Td>
                   <Td>
                     <Badge tone={d.piiCount ? "violet" : "stone"}>
@@ -90,11 +87,11 @@ export default function DocumentTable({
                   <Td>
                     <Badge
                       tone={
-                        d.status === "Scanned"
+                        d.status === "SCANNED"
                           ? "emerald"
-                          : d.status === "Queued"
+                          : d.status === "QUEUED"
                           ? "amber"
-                          : d.status === "Scanning"
+                          : d.status === "SCANNING"
                           ? "violet"
                           : "rose"
                       }

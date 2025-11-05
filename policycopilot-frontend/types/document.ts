@@ -1,5 +1,5 @@
 export type DocType = "PDF" | "DOCX" | "CSV";
-export type DocStatus = "Queued" | "Scanning" | "Scanned" | "Error";
+export type DocStatus = "QUEUED" | "SCANNING" | "SCANNED" | "ERROR";
 
 export interface Doc {
   id: string;
