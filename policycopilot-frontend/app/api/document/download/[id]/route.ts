@@ -3,10 +3,10 @@ import { NextRequest } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const cookie = req.headers.get("cookie") ?? "";
-  const { id } = params;
+  const { id } = await params;
 
   try {
     const backendRes = await server.get(`/document/download/${id}`, {

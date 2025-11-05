@@ -3,10 +3,10 @@ import { NextRequest } from "next/server";
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const cookie = req.headers.get("cookie") ?? "";
-  const { id } = params;
+  const { id } = await params;
 
   try {
     const res = await server.delete(`/document/delete/${id}`, {
