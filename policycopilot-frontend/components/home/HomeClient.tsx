@@ -1,12 +1,26 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDocuments } from "@/hooks/useDocuments";
 import Sidebar from "./Sidebar";
 import DocumentTable from "./DocumentTable";
+import ConfirmDeleteModal from "./ConfirmDeleteModel";
 
 export default function HomeClient() {
   const { state, actions, refs } = useDocuments();
+  const [docToDelete, setDocToDelete] = useState<string | null>(null);
+
+  const handleDeleteClick = (id: string) => {
+    setDocToDelete(id);
+  };
+
+  const handleCancel = () => setDocToDelete(null);
+
+  const handleConfirm = async () => {
+    if (docToDelete == null) return;
+    actions.remove(docToDelete);
+    setDocToDelete(null);
+  };
 
   useEffect(() => {
     actions.load();
@@ -37,9 +51,17 @@ export default function HomeClient() {
               query={state.query}
               onQueryChange={actions.setQuery}
               onUploadClick={actions.onPickFileClick}
+              onDeleteClick={handleDeleteClick}
               loading={state.loading}
             />
           </main>
+          {/* modal */}
+          {docToDelete != null && (
+            <ConfirmDeleteModal
+              onCancel={handleCancel}
+              onConfirm={handleConfirm}
+            />
+          )}
         </div>
       </div>
     </div>

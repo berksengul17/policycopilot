@@ -34,7 +34,6 @@ export default function Sidebar({
         <SidebarBtn label="Uploaded Documents" active />
         <SidebarBtn label="Upload New" onClick={onUploadClick} />
         <SidebarBtn label="Scan Queue" />
-        <SidebarBtn label="Settings" />
       </div>
 
       {/* stats */}
