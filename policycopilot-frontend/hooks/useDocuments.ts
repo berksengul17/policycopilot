@@ -1,6 +1,10 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import type { Doc } from "@/types/document";
-import { fetchDocuments, uploadDocument } from "@/services/docService";
+import {
+  fetchDocuments,
+  uploadDocument,
+  deleteDocument,
+} from "@/services/docService";
 
 export function useDocuments() {
   const fileRef = useRef<HTMLInputElement | null>(null);
@@ -16,6 +20,11 @@ export function useDocuments() {
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  const remove = useCallback(async (docId: string) => {
+    await deleteDocument(docId);
+    setDocs((prev) => prev.filter((d) => d.id != docId));
   }, []);
 
   const onPickFileClick = useCallback(() => fileRef.current?.click(), []);
@@ -60,7 +69,7 @@ export function useDocuments() {
       totalHighRisk,
       queuedCount,
     },
-    actions: { setQuery, load, onPickFileClick, onFileChange },
+    actions: { setQuery, load, remove, onPickFileClick, onFileChange },
     refs: { fileRef },
   };
 }

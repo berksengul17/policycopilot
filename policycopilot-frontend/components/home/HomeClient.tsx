@@ -10,8 +10,8 @@ export default function HomeClient() {
   const { state, actions, refs } = useDocuments();
   const [docToDelete, setDocToDelete] = useState<string | null>(null);
 
-  const handleDeleteClick = (id: string) => {
-    setDocToDelete(id);
+  const handleDeleteClick = (docId: string) => {
+    setDocToDelete(docId);
   };
 
   const handleCancel = () => setDocToDelete(null);

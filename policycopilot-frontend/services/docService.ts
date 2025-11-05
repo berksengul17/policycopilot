@@ -44,3 +44,8 @@ export async function downloadDocument(fileId: string) {
   a.remove();
   URL.revokeObjectURL(url);
 }
+
+export async function deleteDocument(fileId: string) {
+  const { status } = await api.delete(`/document/delete/${fileId}`);
+  if (status < 200 || status >= 300) throw new Error("Document delete failed");
+}
