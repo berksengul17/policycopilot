@@ -44,7 +44,6 @@ public class DocumentController {
     @GetMapping("/download/{id}")
     public ResponseEntity<byte[]> downloadDocument(@PathVariable Long id,
                                                    @AuthenticationPrincipal User user) {
-        // FIXME when document doesnt exist it returns error code of 403 instead of 404
         try {
             Document doc = documentService.getDocument(id);
 
@@ -60,6 +59,16 @@ public class DocumentController {
                     .body(doc.getContent());
         } catch (DocumentNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteDocument(@PathVariable Long id) {
+        try {
+            documentService.deleteDocument(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }

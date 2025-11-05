@@ -30,4 +30,8 @@ public class DocumentService {
                         file.getContentType(),
                         owner));
     }
+
+    public void deleteDocument(Long id) {
+        documentRepository.deleteById(id);
+    }
 }
