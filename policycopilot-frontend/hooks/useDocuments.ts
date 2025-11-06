@@ -4,6 +4,7 @@ import {
   fetchDocuments,
   uploadDocument,
   deleteDocument,
+  fetchContent,
 } from "@/services/docService";
 
 export function useDocuments() {
@@ -20,6 +21,10 @@ export function useDocuments() {
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  const loadContent = useCallback(async (docId: string): Promise<Blob> => {
+    return await fetchContent(docId);
   }, []);
 
   const remove = useCallback(async (docId: string) => {
@@ -69,7 +74,14 @@ export function useDocuments() {
       totalHighRisk,
       queuedCount,
     },
-    actions: { setQuery, load, remove, onPickFileClick, onFileChange },
+    actions: {
+      setQuery,
+      load,
+      loadContent,
+      remove,
+      onPickFileClick,
+      onFileChange,
+    },
     refs: { fileRef },
   };
 }

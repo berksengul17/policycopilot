@@ -8,6 +8,15 @@ export async function fetchDocuments(): Promise<Doc[]> {
   return data;
 }
 
+export async function fetchContent(fileId: string): Promise<Blob> {
+  const { data, status } = await api.get(`/document/get-content/${fileId}`, {
+    responseType: "blob",
+  });
+  if (status < 200 || status >= 300) throw new Error("Document fetch failed");
+  console.log(`Fetched: ${data}`);
+  return data;
+}
+
 export async function uploadDocument(file: File): Promise<Doc> {
   const form = new FormData();
   form.append("file", file);
