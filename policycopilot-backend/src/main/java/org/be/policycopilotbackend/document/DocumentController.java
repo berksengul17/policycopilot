@@ -26,6 +26,25 @@ public class DocumentController {
         return ResponseEntity.ok().body(docs);
     }
 
+    @GetMapping("/get-content/{id}")
+    public ResponseEntity<byte[]> getDocument(@PathVariable Long id,
+                                              @AuthenticationPrincipal User user) {
+        try {
+            Document doc = documentService.getDocument(id);
+            if (!doc.getOwner().getId().equals(user.getId())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
+            return ResponseEntity
+                    .ok()
+                    .header("Content-Type", doc.getContentType())
+                    .body(doc.getContent());
+
+        } catch (DocumentNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
     @PostMapping("/upload")
     public ResponseEntity<DocumentDto> uploadDocument(@RequestParam("file") MultipartFile file,
                                                  @AuthenticationPrincipal User user) {
