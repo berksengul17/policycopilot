@@ -1,7 +1,9 @@
 package org.be.policycopilotbackend.document.processing;
 
-public record PresidioAnalyzerResponse(String analysisExplanation,
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record PresidioAnalyzerResponse(@JsonProperty("analysis_explanation") String analysisExplanation,
                                        int end,
-                                       String entityType,
+                                       @JsonProperty("entity_type") String entityType,
                                        float score,
                                        int start) {}

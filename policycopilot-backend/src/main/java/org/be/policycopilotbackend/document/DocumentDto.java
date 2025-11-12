@@ -1,6 +1,9 @@
 package org.be.policycopilotbackend.document;
 
+import org.be.policycopilotbackend.document.piientity.PiiEntity;
+
 import java.util.Date;
+import java.util.List;
 
 public record DocumentDto(
         Long id,
@@ -8,8 +11,7 @@ public record DocumentDto(
         Date uploadDate,
         String contentType,
         DocumentStatus status,
-        Integer highRiskCount,
-        Integer piiCount
+        List<PiiEntity> piiEntities
 ) {
     public static DocumentDto from(Document d) {
         return new DocumentDto(
@@ -18,8 +20,7 @@ public record DocumentDto(
                 d.getUploadDate(),
                 d.getContentType(),
                 d.getStatus(),
-                d.getHighRiskCount(),
-                d.getPiiCount()
+                d.getPiiEntities()
         );
     }
 }

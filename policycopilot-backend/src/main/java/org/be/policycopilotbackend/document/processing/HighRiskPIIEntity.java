@@ -1,0 +1,31 @@
+package org.be.policycopilotbackend.document.processing;
+
+public enum HighRiskPIIEntity {
+    CREDIT_CARD,
+    CRYPTO,
+    IBAN_CODE,
+    IP_ADDRESS,
+    MEDICAL_LICENSE,
+    US_BANK_NUMBER,
+    US_ITIN,
+    US_PASSPORT,
+    US_SSN,
+    UK_NINO,
+    ES_NIF,
+    ES_NIE,
+    IT_FISCAL_CODE,
+    IT_VAT_CODE,
+    IT_PASSPORT,
+    IT_IDENTITY_CARD,
+    PL_PESEL,
+    SG_NRIC_FIN,
+    SG_UEN,
+    AU_TFN,
+    AU_MEDICARE,
+    IN_PAN,
+    IN_AADHAAR,
+    IN_PASSPORT,
+    FI_PERSONAL_IDENTITY_CODE,
+    KR_RRN,
+    TH_TNIN
+}

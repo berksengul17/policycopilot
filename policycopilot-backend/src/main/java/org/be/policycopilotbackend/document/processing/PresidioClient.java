@@ -31,6 +31,12 @@ public class PresidioClient {
                         new ParameterizedTypeReference<>() {
                         });
 
-        return resp.getBody();
+        // if null return empty list
+        // else filter detections below 0.4
+        return (resp.getBody() != null) ? resp
+                .getBody()
+                .stream()
+                .filter(r -> r.score() >= 0.4)
+                .toList() : List.of();
     }
 }

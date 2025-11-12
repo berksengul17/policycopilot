@@ -4,9 +4,12 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.be.policycopilotbackend.document.piientity.PiiEntity;
 import org.be.policycopilotbackend.user.User;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -24,8 +27,8 @@ public class Document {
     private String contentType;
     @Enumerated(EnumType.STRING)
     private DocumentStatus status;
-    private int piiCount;
-    private int highRiskCount;
+    @OneToMany(mappedBy="document", cascade = CascadeType.ALL)
+    private List<PiiEntity> piiEntities;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User owner;
@@ -37,7 +40,6 @@ public class Document {
         this.contentType = contentType;
         this.owner = owner;
         this.status = DocumentStatus.QUEUED;
-        this.piiCount = 0;
-        this.highRiskCount = 0;
+        this.piiEntities = new ArrayList<>();
     }
 }
