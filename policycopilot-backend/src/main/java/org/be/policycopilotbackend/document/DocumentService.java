@@ -2,9 +2,11 @@ package org.be.policycopilotbackend.document;
 
 import lombok.AllArgsConstructor;
 import org.be.policycopilotbackend.config.RabbitConfig;
+import org.be.policycopilotbackend.document.piientity.PiiEntity;
 import org.be.policycopilotbackend.user.User;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Date;
@@ -17,8 +19,17 @@ public class DocumentService {
     private final DocumentRepository documentRepository;
     private final RabbitTemplate rabbitTemplate;
 
-    public List<Document> getAllForUser(User user) {
-        return documentRepository.findAllByOwner_Id(user.getId());
+    @Transactional(readOnly = true)
+    public List<DocumentDto> getAllForUser(User user) {
+        return documentRepository
+                .findAllByOwner_Id(user.getId())
+                .stream()
+                .map(d -> new DocumentDto(
+                        d.getId(), d.getName(), d.getUploadDate(), d.getContentType(), d.getStatus(),
+                        d.getPiiEntities().size(),
+                        (int) d.getPiiEntities().stream().filter(PiiEntity::isHighRisk).count()
+                ))
+                .toList();
     }
 
     public Document getDocument(Long id) throws DocumentNotFoundException {

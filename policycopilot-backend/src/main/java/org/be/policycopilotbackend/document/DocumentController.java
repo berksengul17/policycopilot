@@ -1,6 +1,7 @@
 package org.be.policycopilotbackend.document;
 
 import lombok.RequiredArgsConstructor;
+import org.be.policycopilotbackend.document.piientity.PiiEntityService;
 import org.be.policycopilotbackend.user.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,23 +18,49 @@ import java.util.List;
 public class DocumentController {
 
     private final DocumentService documentService;
+    private final PiiEntityService piiEntityService;
 
     @GetMapping("/get-all")
     public ResponseEntity<List<DocumentDto>> getAllDocuments(@AuthenticationPrincipal User user) {
-        List<DocumentDto> docs = documentService.getAllForUser(user)
-                .stream().map(DocumentDto::from).toList();
-
+        List<DocumentDto> docs = documentService.getAllForUser(user);
         return ResponseEntity.ok().body(docs);
+    }
+
+    @GetMapping("/{id}/pii")
+    public ResponseEntity<List<String>> getPiiList(@PathVariable("id") Long id,
+                                                   @AuthenticationPrincipal User user) {
+        try {
+            Document doc = documentService.getDocument(id);
+
+            if (!doc.getOwner().getId().equals(user.getId())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
+            List<String> piiList = piiEntityService.getPiiList(doc);
+
+            return  ResponseEntity.ok().body(piiList);
+        } catch (DocumentNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
     }
 
     @PostMapping("/upload")
     public ResponseEntity<DocumentDto> uploadDocument(@RequestParam("file") MultipartFile file,
                                                  @AuthenticationPrincipal User user) {
         try {
-            DocumentDto doc = DocumentDto.from(documentService.saveDocument(file, user));
+            Document doc = documentService.saveDocument(file, user);
+            DocumentDto docDto = new DocumentDto(doc.getId(),
+                    doc.getName(),
+                    doc.getUploadDate(),
+                    doc.getContentType(),
+                    doc.getStatus(),
+                    0,
+                    0);
+
             return ResponseEntity
                     .status(HttpStatus.CREATED)
-                    .body(doc);
+                    .body(docDto);
         } catch (IOException e) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
