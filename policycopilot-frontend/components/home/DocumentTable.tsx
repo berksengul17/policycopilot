@@ -1,21 +1,21 @@
 "use client";
 
 import Badge from "@/components/ui/Badge";
-import type { Doc } from "@/types/document";
+import type { Doc, SelectedDoc } from "@/types/document";
 
 export default function DocumentTable({
   items,
   query,
   onQueryChange,
   onUploadClick,
-  onDeleteClick,
+  onDocSelectClick,
   loading,
 }: {
   items: Doc[];
   query: string;
   onQueryChange: (v: string) => void;
   onUploadClick: () => void;
-  onDeleteClick: (docId: string) => void;
+  onDocSelectClick: (selectedDoc: SelectedDoc) => void;
   loading?: boolean;
 }) {
   return (
@@ -101,11 +101,18 @@ export default function DocumentTable({
                   </Td>
                   <Td className="text-right">
                     <div className="flex justify-end items-center gap-2">
-                      <button className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm hover:bg-gray-100">
+                      <button
+                        onClick={() =>
+                          onDocSelectClick({ docId: d.id, purpose: "View" })
+                        }
+                        className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm hover:bg-gray-100"
+                      >
                         View
                       </button>
                       <button
-                        onClick={() => onDeleteClick(d.id)}
+                        onClick={() =>
+                          onDocSelectClick({ docId: d.id, purpose: "Delete" })
+                        }
                         className="ml-2 rounded-lg border border-gray-200 px-3 py-2 hover:bg-gray-50 text-gray-800 hover:text-red-500 "
                       >
                         {/* Delete icon */}

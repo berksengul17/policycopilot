@@ -5,26 +5,43 @@ import { useDocuments } from "@/hooks/useDocuments";
 import Sidebar from "./Sidebar";
 import DocumentTable from "./DocumentTable";
 import ConfirmDeleteModal from "./ConfirmDeleteModel";
+import FileViewer from "../ui/FileViewer";
+import { SelectedDoc } from "@/types/document";
 
 export default function HomeClient() {
   const { state, actions, refs } = useDocuments();
-  const [docToDelete, setDocToDelete] = useState<string | null>(null);
+  const [selectedDoc, setSelectedDoc] = useState<SelectedDoc | null>(null);
+  const [selectedDocContent, setSelectedDocContent] = useState<Blob | null>(
+    null
+  );
 
-  const handleDeleteClick = (docId: string) => {
-    setDocToDelete(docId);
+  const handleDocSelect = (selectedDoc: SelectedDoc) => {
+    setSelectedDoc(selectedDoc);
   };
 
-  const handleCancel = () => setDocToDelete(null);
+  const handleCancel = () => setSelectedDoc(null);
 
   const handleConfirm = async () => {
-    if (docToDelete == null) return;
-    actions.remove(docToDelete);
-    setDocToDelete(null);
+    if (selectedDoc == null || selectedDoc?.purpose != "Delete") return;
+    actions.remove(selectedDoc.docId);
+    setSelectedDoc(null);
+  };
+
+  const handleLoadContent = async () => {
+    if (selectedDoc != null && selectedDoc.purpose == "View") {
+      const data = await actions.loadContent(selectedDoc.docId);
+      setSelectedDocContent(data);
+    }
   };
 
   useEffect(() => {
     actions.load();
   }, [actions.load]);
+
+  useEffect(() => {
+    console.log("selected doc changed");
+    handleLoadContent();
+  }, [selectedDoc]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-400 via-violet-500 to-fuchsia-500">
@@ -51,12 +68,17 @@ export default function HomeClient() {
               query={state.query}
               onQueryChange={actions.setQuery}
               onUploadClick={actions.onPickFileClick}
-              onDeleteClick={handleDeleteClick}
+              onDocSelectClick={handleDocSelect}
               loading={state.loading}
             />
+            {selectedDoc != null &&
+              selectedDocContent &&
+              selectedDoc.purpose == "View" && (
+                <FileViewer content={selectedDocContent} />
+              )}
           </main>
           {/* modal */}
-          {docToDelete != null && (
+          {selectedDoc != null && selectedDoc.purpose == "Delete" && (
             <ConfirmDeleteModal
               onCancel={handleCancel}
               onConfirm={handleConfirm}
