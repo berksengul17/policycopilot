@@ -12,20 +12,24 @@ import org.springframework.stereotype.Component;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class DocumentProcessingListener {
     private final DocumentService documentService;
     private final TextExtractionService textExtractionService;
+    private final PresidioClient presidioClient;
 
     @RabbitListener(queues = RabbitConfig.DOC_QUEUE)
     public void onDocumentUpload(Long docId) {
         try {
             Document doc = documentService.getDocument(docId);
-            doc.setStatus(DocumentStatus.SCANNED);
             String content = textExtractionService.extractText(doc.getContent());
-            System.out.println(content);
+            List<PresidioAnalyzerResponse> resp = presidioClient.analyze(content);
+
+            doc.setPiiCount(resp.size());
+            doc.setStatus(DocumentStatus.SCANNED);
             documentService.updateDocument(doc);
         } catch (DocumentNotFoundException e) {
             System.out.println("Document not found.");
