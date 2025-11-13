@@ -5,6 +5,7 @@ import org.apache.tika.exception.TikaException;
 import org.be.policycopilotbackend.document.Document;
 import org.be.policycopilotbackend.document.processing.PresidioAnalyzerResponse;
 import org.be.policycopilotbackend.document.processing.TextExtractionService;
+import org.be.policycopilotbackend.util.TextFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -37,14 +38,21 @@ public class PiiEntityService {
 
     }
 
-    public List<String> getPiiList(Document doc) {
+    public List<PiiDto> getPiiList(Document doc) {
         try {
-            List<String> piiList = new ArrayList<>();
+            List<PiiDto> piiList = new ArrayList<>();
             String content = textExtractionService.extractText(doc.getContent());
             List<PiiEntity> piiEntities = piiEntityRepository.findAllByDocument_Id(doc.getId());
 
             for  (PiiEntity piiEntity : piiEntities) {
-                piiList.add(content.substring(piiEntity.getStart(), piiEntity.getEnd()));
+                String text = content.substring(piiEntity.getStart(), piiEntity.getEnd());
+                String displayType = TextFormat.prettifyEnumLike(piiEntity.getType());
+                piiList.add(new PiiDto(
+                        piiEntity.getId(),
+                        displayType,
+                        text,
+                        piiEntity.isHighRisk()
+                ));
             }
 
             return piiList;

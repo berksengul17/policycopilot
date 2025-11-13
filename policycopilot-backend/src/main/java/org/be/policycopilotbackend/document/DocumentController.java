@@ -1,6 +1,7 @@
 package org.be.policycopilotbackend.document;
 
 import lombok.RequiredArgsConstructor;
+import org.be.policycopilotbackend.document.piientity.PiiDto;
 import org.be.policycopilotbackend.document.piientity.PiiEntityService;
 import org.be.policycopilotbackend.user.User;
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,7 @@ public class DocumentController {
     }
 
     @GetMapping("/{id}/pii")
-    public ResponseEntity<List<String>> getPiiList(@PathVariable("id") Long id,
+    public ResponseEntity<List<PiiDto>> getPiiList(@PathVariable("id") Long id,
                                                    @AuthenticationPrincipal User user) {
         try {
             Document doc = documentService.getDocument(id);
@@ -36,13 +37,12 @@ public class DocumentController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            List<String> piiList = piiEntityService.getPiiList(doc);
+            List<PiiDto> piiList = piiEntityService.getPiiList(doc);
 
             return  ResponseEntity.ok().body(piiList);
         } catch (DocumentNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-
     }
 
     @PostMapping("/upload")

@@ -1,25 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useDocuments } from "@/hooks/useDocuments";
-import Sidebar from "./Sidebar";
-import DocumentTable from "./DocumentTable";
-import ConfirmDeleteModal from "./ConfirmDeleteModel";
-import FileViewer from "../ui/FileViewer";
 import { SelectedDoc } from "@/types/document";
+import { useEffect, useState } from "react";
+import ConfirmDeleteModal from "./ConfirmDeleteModel";
+import DocumentTable from "./DocumentTable";
+import PiiListModal from "./PiiListModal";
+import Sidebar from "./Sidebar";
+import { PIIEntity } from "@/types/pii";
 
 export default function HomeClient() {
   const { state, actions, refs } = useDocuments();
   const [selectedDoc, setSelectedDoc] = useState<SelectedDoc | null>(null);
-  const [selectedDocContent, setSelectedDocContent] = useState<Blob | null>(
-    null
-  );
+  const [piiList, setPiiList] = useState<PIIEntity[]>([]);
 
   const handleDocSelect = (selectedDoc: SelectedDoc) => {
     setSelectedDoc(selectedDoc);
   };
 
-  const handleCancel = () => setSelectedDoc(null);
+  const handleClose = () => setSelectedDoc(null);
 
   const handleConfirm = async () => {
     if (selectedDoc == null || selectedDoc?.purpose != "Delete") return;
@@ -27,20 +26,15 @@ export default function HomeClient() {
     setSelectedDoc(null);
   };
 
-  const handleLoadContent = async () => {
+  const handlePiiEntities = async () => {
     if (selectedDoc != null && selectedDoc.purpose == "View") {
-      const data = await actions.loadContent(selectedDoc.docId);
-      setSelectedDocContent(data);
+      const data = await actions.loadPiiList(selectedDoc.docId);
+      setPiiList(data);
     }
   };
 
   useEffect(() => {
-    actions.load();
-  }, [actions.load]);
-
-  useEffect(() => {
-    console.log("selected doc changed");
-    handleLoadContent();
+    handlePiiEntities();
   }, [selectedDoc]);
 
   return (
@@ -71,18 +65,17 @@ export default function HomeClient() {
               onDocSelectClick={handleDocSelect}
               loading={state.loading}
             />
-            {selectedDoc != null &&
-              selectedDocContent &&
-              selectedDoc.purpose == "View" && (
-                <FileViewer content={selectedDocContent} />
-              )}
           </main>
-          {/* modal */}
+          {/* confirm delete modal */}
           {selectedDoc != null && selectedDoc.purpose == "Delete" && (
             <ConfirmDeleteModal
-              onCancel={handleCancel}
+              onCancel={handleClose}
               onConfirm={handleConfirm}
             />
+          )}
+          {/* view pii list modal */}
+          {selectedDoc != null && selectedDoc.purpose == "View" && (
+            <PiiListModal piiList={piiList} onClose={handleClose} />
           )}
         </div>
       </div>
