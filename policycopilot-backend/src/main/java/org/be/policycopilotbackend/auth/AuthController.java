@@ -2,6 +2,7 @@ package org.be.policycopilotbackend.auth;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
+    @Value("${security.jwt.expiration-time}")
+    private long jwtExpirationMinutes;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest,
@@ -26,7 +29,7 @@ public class AuthController {
                 .httpOnly(true).secure(false)
                 .sameSite("Lax")
                 .path("/")
-                .maxAge(Duration.ofMinutes(5))
+                .maxAge(Duration.ofMinutes(jwtExpirationMinutes))
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
@@ -38,7 +41,7 @@ public class AuthController {
         ResponseCookie cookie = ResponseCookie.from("access_token", "")
                 .httpOnly(true).secure(false).sameSite("Lax").path("/").maxAge(0).build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/me")
