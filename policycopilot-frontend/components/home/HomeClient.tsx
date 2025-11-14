@@ -1,30 +1,43 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useDocuments } from "@/hooks/useDocuments";
-import Sidebar from "./Sidebar";
-import DocumentTable from "./DocumentTable";
+import { SelectedDoc } from "@/types/document";
+import { useEffect, useState } from "react";
 import ConfirmDeleteModal from "./ConfirmDeleteModel";
+import DocumentTable from "./DocumentTable";
+import PiiListModal from "./PiiListModal";
+import Sidebar from "./Sidebar";
+import { PIIEntity } from "@/types/pii";
+import { useLogin } from "@/hooks/useLogin";
 
 export default function HomeClient() {
   const { state, actions, refs } = useDocuments();
-  const [docToDelete, setDocToDelete] = useState<string | null>(null);
+  const { logout } = useLogin();
+  const [selectedDoc, setSelectedDoc] = useState<SelectedDoc | null>(null);
+  const [piiList, setPiiList] = useState<PIIEntity[]>([]);
 
-  const handleDeleteClick = (docId: string) => {
-    setDocToDelete(docId);
+  const handleDocSelect = (selectedDoc: SelectedDoc) => {
+    setSelectedDoc(selectedDoc);
   };
 
-  const handleCancel = () => setDocToDelete(null);
+  const handleClose = () => setSelectedDoc(null);
 
-  const handleConfirm = async () => {
-    if (docToDelete == null) return;
-    actions.remove(docToDelete);
-    setDocToDelete(null);
+  const handleConfirm = () => {
+    if (selectedDoc == null || selectedDoc?.purpose != "Delete") return;
+    actions.remove(selectedDoc.docId);
+    setSelectedDoc(null);
+  };
+
+  const handlePiiEntities = async () => {
+    if (selectedDoc != null && selectedDoc.purpose == "View") {
+      const data = await actions.loadPiiList(selectedDoc.docId);
+      setPiiList(data);
+    }
   };
 
   useEffect(() => {
-    actions.load();
-  }, [actions.load]);
+    handlePiiEntities();
+  }, [selectedDoc]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-400 via-violet-500 to-fuchsia-500">
@@ -42,6 +55,7 @@ export default function HomeClient() {
               onUploadClick={actions.onPickFileClick}
               fileInput={refs.fileRef}
               onFileChange={actions.onFileChange}
+              onLogout={logout}
             />
           </aside>
 
@@ -51,16 +65,20 @@ export default function HomeClient() {
               query={state.query}
               onQueryChange={actions.setQuery}
               onUploadClick={actions.onPickFileClick}
-              onDeleteClick={handleDeleteClick}
+              onDocSelectClick={handleDocSelect}
               loading={state.loading}
             />
           </main>
-          {/* modal */}
-          {docToDelete != null && (
+          {/* confirm delete modal */}
+          {selectedDoc != null && selectedDoc.purpose == "Delete" && (
             <ConfirmDeleteModal
-              onCancel={handleCancel}
+              onCancel={handleClose}
               onConfirm={handleConfirm}
             />
+          )}
+          {/* view pii list modal */}
+          {selectedDoc != null && selectedDoc.purpose == "View" && (
+            <PiiListModal piiList={piiList} onClose={handleClose} />
           )}
         </div>
       </div>

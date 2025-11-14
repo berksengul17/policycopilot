@@ -1,4 +1,4 @@
-package org.be.policycopilotbackend.document.processing;
+package org.be.policycopilotbackend.document.piientity;
 
 public enum HighRiskPIIEntity {
     CREDIT_CARD,

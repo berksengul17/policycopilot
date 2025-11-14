@@ -10,3 +10,8 @@ export interface Doc {
   highRiskCount: number;
   status: DocStatus;
 }
+
+export type SelectedDoc = {
+  docId: string;
+  purpose: "View" | "Delete";
+};
