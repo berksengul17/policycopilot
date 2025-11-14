@@ -10,7 +10,7 @@ export function useLogin() {
   const loginMutation = useMutation({
     mutationFn: login,
     onSuccess: () => {
-      router.push("/");
+      router.replace("/");
     },
   });
 
