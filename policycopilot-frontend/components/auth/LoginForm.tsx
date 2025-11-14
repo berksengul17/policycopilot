@@ -6,11 +6,11 @@ import React, { useState } from "react";
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { submit, loading, err } = useLogin();
+  const { login, loading, err } = useLogin();
 
-  async function onSubmit(e: React.FormEvent) {
+  function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    await submit({ email, password });
+    login({ email, password });
   }
 
   return (

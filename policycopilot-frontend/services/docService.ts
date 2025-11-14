@@ -1,5 +1,6 @@
 import { api } from "@/lib/axios";
 import type { Doc } from "@/types/document";
+import { PIIEntity } from "@/types/pii";
 
 // Replace these when your real BFF routes are ready
 export async function fetchDocuments(): Promise<Doc[]> {
@@ -8,12 +9,9 @@ export async function fetchDocuments(): Promise<Doc[]> {
   return data;
 }
 
-export async function fetchContent(fileId: string): Promise<Blob> {
-  const { data, status } = await api.get(`/document/get-content/${fileId}`, {
-    responseType: "blob",
-  });
-  if (status < 200 || status >= 300) throw new Error("Document fetch failed");
-  console.log(`Fetched: ${data}`);
+export async function fetchPiiList(fileId: string): Promise<PIIEntity[]> {
+  const { data, status } = await api.get(`/document/${fileId}/pii`);
+  if (status < 200 || status >= 300) throw new Error("Pii fetch failed");
   return data;
 }
 

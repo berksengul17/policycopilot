@@ -9,12 +9,14 @@ export default function Sidebar({
   onUploadClick,
   fileInput,
   onFileChange,
+  onLogout,
 }: {
   userName: string;
   stats: { docs: number; pii: number; high: number; queued: number };
   onUploadClick: () => void;
   fileInput: React.RefObject<HTMLInputElement | null>;
   onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onLogout: () => void;
 }) {
   return (
     <div className="rounded-2xl bg-white/90 backdrop-blur-sm shadow-2xl border border-white/50 p-6">
@@ -55,7 +57,7 @@ export default function Sidebar({
 
       <button
         className="mt-8 w-full rounded-xl border border-gray-200 py-2 text-sm text-gray-600 hover:bg-gray-50 transition"
-        onClick={() => {}}
+        onClick={onLogout}
       >
         Logout
       </button>

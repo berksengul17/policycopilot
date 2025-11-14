@@ -8,9 +8,11 @@ import DocumentTable from "./DocumentTable";
 import PiiListModal from "./PiiListModal";
 import Sidebar from "./Sidebar";
 import { PIIEntity } from "@/types/pii";
+import { useLogin } from "@/hooks/useLogin";
 
 export default function HomeClient() {
   const { state, actions, refs } = useDocuments();
+  const { logout } = useLogin();
   const [selectedDoc, setSelectedDoc] = useState<SelectedDoc | null>(null);
   const [piiList, setPiiList] = useState<PIIEntity[]>([]);
 
@@ -20,7 +22,7 @@ export default function HomeClient() {
 
   const handleClose = () => setSelectedDoc(null);
 
-  const handleConfirm = async () => {
+  const handleConfirm = () => {
     if (selectedDoc == null || selectedDoc?.purpose != "Delete") return;
     actions.remove(selectedDoc.docId);
     setSelectedDoc(null);
@@ -53,6 +55,7 @@ export default function HomeClient() {
               onUploadClick={actions.onPickFileClick}
               fileInput={refs.fileRef}
               onFileChange={actions.onFileChange}
+              onLogout={logout}
             />
           </aside>
 

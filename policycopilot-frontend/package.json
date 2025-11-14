@@ -3,14 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "copy-assets": "cp -R ./node_modules/@nutrient-sdk/viewer/dist/ public/nutrient-viewer",
-    "dev": "npm run copy-assets && next dev",
-    "build": "npm run copy-assets && next build",
+    "dev": "next dev",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
-    "@nutrient-sdk/viewer": "^1.8.0",
+    "@tanstack/react-query": "^5.90.8",
     "axios": "^1.13.1",
     "next": "16.0.1",
     "react": "19.2.0",

@@ -1,32 +1,38 @@
+import { login, logout } from "@/services/authService";
+import { LoginBody } from "@/types/auth";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { LoginBody } from "@/types/auth";
-import { login } from "@/services/authService";
 
 export function useLogin() {
-  const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState<string | null>(null);
   const router = useRouter();
 
-  const submit = async (loginBody: LoginBody) => {
-    setErr(null);
-    setLoading(true);
-    try {
-      await login(loginBody);
+  const loginMutation = useMutation({
+    mutationFn: login,
+    onSuccess: () => {
       router.push("/");
-    } catch (e: unknown) {
-      const msg = (
-        axios.isAxiosError(e)
-          ? e?.response?.data?.message || e.response?.data || e.message
-          : "Login failed"
-      ) as string;
+    },
+  });
 
-      setErr(msg);
-    } finally {
-      setLoading(false);
-    }
+  const logoutMutation = useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      router.push("/login");
+    },
+  });
+
+  const e = loginMutation.error;
+  const err =
+    e && axios.isAxiosError(e)
+      ? ((e.response?.data?.message ?? e.response?.data ?? e.message) as string)
+      : e
+      ? "Login failed"
+      : null;
+
+  return {
+    login: (loginBody: LoginBody) => loginMutation.mutate(loginBody),
+    logout: () => logoutMutation.mutate(),
+    loading: loginMutation.isPending,
+    err,
   };
-
-  return { submit, loading, err };
 }

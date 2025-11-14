@@ -9,3 +9,8 @@ export async function login(payload: LoginBody): Promise<LoginResponse> {
   if (status < 200 || status >= 300) throw new Error("Login failed");
   return data; // cookie is set by the BFF response
 }
+
+export async function logout() {
+  const { status } = await api.post("/auth/logout");
+  if (status < 200 || status >= 300) throw new Error("Logout failed");
+}
