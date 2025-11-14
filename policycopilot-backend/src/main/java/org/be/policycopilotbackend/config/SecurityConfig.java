@@ -1,5 +1,6 @@
 package org.be.policycopilotbackend.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.be.policycopilotbackend.auth.JwtAuthFilter;
 import org.springframework.context.annotation.Bean;
@@ -56,6 +57,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/login", "/api/v1/auth/logout", "/actuator/health").permitAll()
                         .requestMatchers("/api/v1/auth/me").authenticated()
                         .anyRequest().authenticated())
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"message\": \"Unauthorized\"}");
+                        }))
                 .authenticationProvider(authProvider(passwordEncoder()))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
