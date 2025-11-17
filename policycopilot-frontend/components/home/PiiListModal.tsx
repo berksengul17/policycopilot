@@ -9,19 +9,25 @@ export default function PiiListModal({
   onClose: () => void;
 }) {
   const [onlyHighRisk, setOnlyHighRisk] = useState<boolean>(false);
+  const [copiedIdList, setCopiedIdList] = useState<string[]>([]);
+  const [copiedAll, setCopiedAll] = useState<boolean>(false);
   const backdropRef = useRef<HTMLDivElement>(null);
 
   const onBackdrop = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === backdropRef.current) onClose();
   };
 
-  const copyOne = async (s: string) => {
-    await navigator.clipboard.writeText(s);
+  const copyOne = async (p: PIIEntity) => {
+    await navigator.clipboard.writeText(p.text);
+    setCopiedIdList((prev) => [p.id, ...prev]);
+    setCopiedAll(false);
   };
 
   const copyAll = async () => {
     if (!piiList.length) return;
     await navigator.clipboard.writeText(piiList.join("\n"));
+    setCopiedAll(true);
+    setCopiedIdList([]);
   };
 
   return (
@@ -78,7 +84,7 @@ export default function PiiListModal({
               className="px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50"
               title="Copy all"
             >
-              Copy all
+              {copiedAll ? "Copied all" : "Copy all"}
             </button>
           </div>
         </div>
@@ -125,10 +131,10 @@ export default function PiiListModal({
                   </span>
 
                   <button
-                    onClick={() => copyOne(p.text)}
+                    onClick={() => copyOne(p)}
                     className="shrink-0 rounded-md border border-gray-200 px-2.5 py-1.5 text-xs text-gray-700 hover:bg-gray-100"
                   >
-                    Copy
+                    {copiedIdList.includes(p.id) ? "Copied" : "Copy"}
                   </button>
                 </li>
               ))}
