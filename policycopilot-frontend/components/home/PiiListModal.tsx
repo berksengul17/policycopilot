@@ -11,6 +11,7 @@ export default function PiiListModal({
   const [onlyHighRisk, setOnlyHighRisk] = useState<boolean>(false);
   const [copiedIdList, setCopiedIdList] = useState<string[]>([]);
   const [copiedAll, setCopiedAll] = useState<boolean>(false);
+  const [query, setQuery] = useState<string>("");
   const backdropRef = useRef<HTMLDivElement>(null);
 
   const onBackdrop = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -25,10 +26,16 @@ export default function PiiListModal({
 
   const copyAll = async () => {
     if (!piiList.length) return;
-    await navigator.clipboard.writeText(piiList.join("\n"));
+    await navigator.clipboard.writeText(piiList.map((p) => p.text).join("\n"));
     setCopiedAll(true);
     setCopiedIdList([]);
   };
+
+  const normalizedQuery = query.toLowerCase().trim();
+
+  const filtered = piiList.filter(
+    (p) => !normalizedQuery || p.text.toLowerCase().includes(normalizedQuery)
+  );
 
   return (
     <div
@@ -52,9 +59,15 @@ export default function PiiListModal({
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg border border-gray-200 px-3 py-2 text-gray-700 hover:bg-gray-50"
+            aria-label="Close"
+            className="flex h-8 w-8 items-center justify-center rounded-full
+             border border-gray-200 text-gray-400
+             hover:text-red-500 hover:border-red-300 hover:bg-red-50
+             transition-colors"
           >
-            Close
+            <span aria-hidden="true" className="text-2xl leading-none">
+              &times;
+            </span>
           </button>
         </div>
 
@@ -72,8 +85,8 @@ export default function PiiListModal({
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <input
-            // value={query}
-            // onChange={(e) => setQuery(e.target.value)}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
             placeholder="Search within PII strings…"
             className="w-full sm:w-72 rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
           />
@@ -95,9 +108,15 @@ export default function PiiListModal({
             <div className="p-6 text-center text-gray-500">
               No PII detected.
             </div>
+          ) : !filtered.length && onlyHighRisk ? (
+            <div className="p-6 text-center text-gray-500">
+              No high risk PII detected.
+            </div>
+          ) : !filtered.length && query ? (
+            <div className="p-6 text-center text-gray-500">No matches.</div>
           ) : (
             <ul className="divide-y divide-gray-100">
-              {piiList.map((p, i) => (
+              {filtered.map((p, i) => (
                 <li
                   key={p.id ?? `${i}-${p.type}-${p.text.slice(0, 8)}`}
                   className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50/60"
@@ -140,16 +159,6 @@ export default function PiiListModal({
               ))}
             </ul>
           )}
-        </div>
-
-        {/* Footer */}
-        <div className="mt-4 flex justify-end">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50"
-          >
-            Done
-          </button>
         </div>
       </div>
     </div>
